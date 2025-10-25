@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Data - AstroVision</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Space Background -->
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="cosmic-dust"></div>
+        <div class="floating-asteroids">
+            <div class="asteroid"></div>
+            <div class="asteroid"></div>
+            <div class="asteroid"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="cosmic-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <i class="fas fa-stars logo-icon"></i>
+                    <span>Astro<span class="gradient-text">Vision</span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="/upload" class="nav-link active"><i class="fas fa-upload"></i> Analyze</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Analysis Workflow -->
+    <section class="analysis-workflow">
+        <div class="container">
+            <div class="workflow-steps">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Upload Data</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Configure</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Analyze</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Results</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section">
+        <div class="container">
+            <div class="upload-header">
+                <h1><i class="fas fa-upload"></i> Cosmic Data Analysis</h1>
+                <p>Upload your astronomical dataset to discover hidden patterns and anomalies</p>
+            </div>
+
+            <form id="uploadForm" class="analysis-form" method="POST" action="/analyze" enctype="multipart/form-data">
+                <!-- Data Upload Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-database"></i> Upload Astronomical Data</h3>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="datafile" name="datafile" accept=".csv" required>
+                        <div class="upload-content">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h4>Upload Your Dataset</h4>
+                            <p>Drag & drop your CSV file or click to browse</p>
+                            <div class="file-requirements">
+                                <span><i class="fas fa-check"></i> CSV Format</span>
+                                <span><i class="fas fa-check"></i> Maximum 100MB</span>
+                                <span><i class="fas fa-check"></i> Numerical Data</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-preview" id="filePreview">
+                        <!-- File info will be displayed here -->
+                    </div>
+
+                    <div class="sample-section">
+                        <div class="sample-header">
+                            <h3><i class="fas fa-vial"></i> Need Sample Data?</h3>
+                            <p>Download our sample astronomical dataset to test the analysis</p>
+                        </div>
+                        <div class="sample-actions">
+                            <a href="/generate_sample" class="sample-button" id="generateSample">
+                                <i class="fas fa-download"></i>
+                                Download Sample Dataset
+                            </a>
+                            <p class="sample-info">
+                                The sample dataset contains simulated astronomical observations with pre-inserted anomalies for testing purposes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Algorithm Selection Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-cogs"></i> Detection Algorithm</h3>
+                    
+                    <div class="algorithm-grid-enhanced">
+                        <!-- Isolation Forest -->
+                        <div class="algorithm-option">
+                            <input type="radio" id="algo-isolationforest" name="algorithm" value="isolationforest" checked>
+                            <label for="algo-isolationforest">
+                                <div class="algorithm-card-enhanced">
+                                    <div class="algorithm-icon">
+                                        <i class="fas fa-tree"></i>
+                                    </div>
+                                    <div class="algorithm-info">
+                                        <h4>Isolation Forest</h4>
+                                        <p>Efficient for high-dimensional datasets using random partitioning</p>
+                                        <div class="algorithm-tags">
+                                            <span class="tag">High Performance</span>
+                                            <span class="tag">Scalable</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- One-Class SVM -->
+                        <div class="algorithm-option">
+                            <input type="radio" id="algo-oneclasssvm" name="algorithm" value="oneclasssvm">
+                            <label for="algo-oneclasssvm">
+                                <div class="algorithm-card-enhanced">
+                                    <div class="algorithm-icon">
+                                        <i class="fas fa-project-diagram"></i>
+                                    </div>
+                                    <div class="algorithm-info">
+                                        <h4>One-Class SVM</h4>
+                                        <p>Ideal for novelty detection with only normal examples</p>
+                                        <div class="algorithm-tags">
+                                            <span class="tag">Robust</span>
+                                            <span class="tag">Flexible</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Local Outlier Factor -->
+                        <div class="algorithm-option">
+                            <input type="radio" id="algo-localoutlierfactor" name="algorithm" value="localoutlierfactor">
+                            <label for="algo-localoutlierfactor">
+                                <div class="algorithm-card-enhanced">
+                                    <div class="algorithm-icon">
+                                        <i class="fas fa-network-wired"></i>
+                                    </div>
+                                    <div class="algorithm-info">
+                                        <h4>Local Outlier Factor</h4>
+                                        <p>Density-based detection comparing local density with neighbors</p>
+                                        <div class="algorithm-tags">
+                                            <span class="tag">Local Analysis</span>
+                                            <span class="tag">Accurate</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- DBSCAN -->
+                        <div class="algorithm-option">
+                            <input type="radio" id="algo-dbscan" name="algorithm" value="dbscan">
+                            <label for="algo-dbscan">
+                                <div class="algorithm-card-enhanced">
+                                    <div class="algorithm-icon">
+                                        <i class="fas fa-dot-circle"></i>
+                                    </div>
+                                    <div class="algorithm-info">
+                                        <h4>DBSCAN</h4>
+                                        <p>Clustering-based approach identifying outliers as noise</p>
+                                        <div class="algorithm-tags">
+                                            <span class="tag">Cluster-Based</span>
+                                            <span class="tag">Versatile</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Elliptic Envelope -->
+                        <div class="algorithm-option">
+                            <input type="radio" id="algo-ellipticenvelope" name="algorithm" value="ellipticenvelope">
+                            <label for="algo-ellipticenvelope">
+                                <div class="algorithm-card-enhanced">
+                                    <div class="algorithm-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="algorithm-info">
+                                        <h4>Elliptic Envelope</h4>
+                                        <p>Assumes Gaussian distribution and fits ellipse around data</p>
+                                        <div class="algorithm-tags">
+                                            <span class="tag">Parametric</span>
+                                            <span class="tag">Robust</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Random Forest -->
+                        <div class="algorithm-option">
+                            <input type="radio" id="algo-randomforest" name="algorithm" value="randomforest">
+                            <label for="algo-randomforest">
+                                <div class="algorithm-card-enhanced">
+                                    <div class="algorithm-icon">
+                                        <i class="fas fa-random"></i>
+                                    </div>
+                                    <div class="algorithm-info">
+                                        <h4>Random Forest</h4>
+                                        <p>Ensemble method using multiple decision trees</p>
+                                        <div class="algorithm-tags">
+                                            <span class="tag">Ensemble</span>
+                                            <span class="tag">Feature Importance</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="config-header">
+                        <p><i class="fas fa-info-circle"></i> Algorithm Description: <span id="algorithmDescription">Isolation Forest efficiently isolates anomalies by randomly selecting features and split values. It works well for high-dimensional datasets and has low computational complexity.</span></p>
+                    </div>
+                </div>
+
+                <!-- Analysis Configuration -->
+                <div class="form-section">
+                    <h3><i class="fas fa-sliders-h"></i> Analysis Configuration</h3>
+                    
+                    <div class="parameters-grid">
+                        <div class="parameter-group">
+                            <label for="contamination">Contamination Rate</label>
+                            <input type="range" id="contamination" name="contamination" min="0.01" max="0.5" step="0.01" value="0.1">
+                            <div class="parameter-value">
+                                <span>Expected anomaly proportion in dataset</span>
+                                <span id="contaminationValue">0.10</span>
+                            </div>
+                        </div>
+
+                        <!-- Algorithm-specific parameters (shown/hidden based on selection) -->
+                        <div class="algorithm-specific active" data-algorithm="isolationforest">
+                            <div class="parameter-group">
+                                <label for="n_estimators">Number of Estimators</label>
+                                <input type="number" id="n_estimators" name="n_estimators" min="10" max="1000" value="100">
+                                <div class="parameter-help">Number of base estimators in the ensemble</div>
+                            </div>
+                        </div>
+
+                        <div class="algorithm-specific" data-algorithm="oneclasssvm">
+                            <div class="parameter-group">
+                                <label for="kernel">Kernel Type</label>
+                                <select id="kernel" name="kernel">
+                                    <option value="rbf">RBF</option>
+                                    <option value="linear">Linear</option>
+                                    <option value="poly">Polynomial</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="algorithm-specific" data-algorithm="localoutlierfactor">
+                            <div class="parameter-group">
+                                <label for="n_neighbors">Number of Neighbors</label>
+                                <input type="number" id="n_neighbors" name="n_neighbors" min="5" max="50" value="20">
+                            </div>
+                        </div>
+
+                        <div class="algorithm-specific" data-algorithm="dbscan">
+                            <div class="parameter-group">
+                                <label for="eps">EPS Value</label>
+                                <input type="number" id="eps" name="eps" min="0.1" max="2.0" step="0.1" value="0.5">
+                            </div>
+                            <div class="parameter-group">
+                                <label for="min_samples">Minimum Samples</label>
+                                <input type="number" id="min_samples" name="min_samples" min="2" max="20" value="5">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="analyze-button" id="analyzeBtn">
+                        <div class="button-content">
+                            <i class="fas fa-rocket"></i>
+                            <span class="button-text">Launch Cosmic Analysis</span>
+                        </div>
+                        <div class="button-loader">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

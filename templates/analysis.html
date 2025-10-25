@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - AstroVision</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.24.1"></script>
+    <style>
+        /* Enhanced Analysis Styles */
+        .analysis-hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 2rem;
+            position: relative;
+        }
+
+        .cosmic-success-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(107, 207, 127, 0.1);
+            border: 1px solid var(--cosmic-success);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--cosmic-success);
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 10px rgba(107, 207, 127, 0.3); }
+            100% { box-shadow: 0 0 20px rgba(107, 207, 127, 0.6); }
+        }
+
+        .analysis-visual {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin: 2rem 0;
+        }
+
+        .cosmic-data-flow {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .data-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--cosmic-primary);
+            animation: data-float 3s ease-in-out infinite;
+        }
+
+        .data-node.anomaly {
+            background: var(--cosmic-danger);
+            animation: anomaly-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes data-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .stat-card-enhanced {
+            background: rgba(26, 31, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .stat-card-enhanced:hover::before {
+            left: 100%;
+        }
+
+        .stat-card-enhanced:hover {
+            transform: translateY(-5px);
+            border-color: var(--cosmic-primary);
+            box-shadow: var(--glow-primary);
+        }
+
+        .feature-impact-graph {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-impact-graph:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        .feature-name {
+            min-width: 120px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .impact-bar-container {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .impact-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .impact-value {
+            min-width: 60px;
+            text-align: right;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--cosmic-primary);
+            font-weight: 600;
+        }
+
+        .anomaly-cluster {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            animation: cluster-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes cluster-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .viz-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .viz-control-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Exo 2', sans-serif;
+        }
+
+        .viz-control-button:hover,
+        .viz-control-button.active {
+            background: rgba(0, 206, 209, 0.1);
+            border-color: var(--cosmic-primary);
+            color: var(--text-primary);
+        }
+
+        .insight-highlight {
+            background: linear-gradient(135deg, rgba(0, 206, 209, 0.1), rgba(123, 104, 238, 0.1));
+            border: 1px solid rgba(123, 104, 238, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .insight-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+        }
+
+        .confidence-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(74, 144, 226, 0.1);
+            border: 1px solid var(--cosmic-secondary);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--cosmic-secondary);
+        }
+
+        .download-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .download-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .download-option:hover {
+            background: rgba(0, 206, 209, 0.1);
+            border-color: var(--cosmic-primary);
+            transform: translateY(-2px);
+        }
+
+        .download-icon {
+            font-size: 2rem;
+            color: var(--cosmic-primary);
+            margin-bottom: 1rem;
+        }
+
+        /* Tab Content Styles */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Chart enhancements */
+        .chart-placeholder {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .chart-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--cosmic-primary);
+        }
+
+        /* Dashboard elements in analysis */
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-item {
+            background: rgba(26, 31, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--cosmic-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive enhancements */
+        @media (max-width: 768px) {
+            .analysis-hero {
+                min-height: 40vh;
+                padding: 100px 0 1rem;
+            }
+            
+            .feature-impact-graph {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .feature-name {
+                min-width: auto;
+            }
+            
+            .impact-bar-container {
+                width: 100%;
+            }
+            
+            .download-options {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Download loading states */
+        .download-option .button-loader {
+            text-align: center;
+            color: var(--cosmic-primary);
+        }
+
+        .download-option .button-loader .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--cosmic-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.5rem auto;
+        }
+
+        .download-option .button-loader p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Space Background -->
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="cosmic-dust"></div>
+        <div class="floating-asteroids">
+            <div class="asteroid"></div>
+            <div class="asteroid"></div>
+            <div class="asteroid"></div>
+        </div>
+    </div>
+
+    <!-- Navigation - Matches index.html exactly -->
+    <nav class="cosmic-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <i class="fas fa-stars logo-icon"></i>
+                    <span>Astro<span class="gradient-text">Vision</span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="/upload" class="nav-link"><i class="fas fa-upload"></i> Analyze</a>
+                <a href="/analysis" class="nav-link active"><i class="fas fa-chart-bar"></i> Results</a>
+                <a href="/dashboard" class="nav-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Analysis Hero Section -->
+    <section class="analysis-hero">
+        <div class="container">
+            {% if results %}
+            <div class="hero-content">
+                <!-- Success Badge -->
+                <div class="cosmic-success-badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Cosmic Analysis Complete</span>
+                </div>
+                
+                <!-- Main Title -->
+                <h1 class="hero-title">
+                    Cosmic <span class="gradient-text">Anomalies</span> Detected
+                </h1>
+                
+                <!-- Description -->
+                <p class="hero-description">
+                    Advanced machine learning analysis has uncovered {{ results.summary.anomalies_detected }} 
+                    anomalous patterns in your astronomical dataset using {{ results.summary.algorithm_used|title }}.
+                </p>
+
+                <!-- Quick Stats -->
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">{{ results.summary.anomalies_detected }}</div>
+                        <div class="stat-label">Anomalies Found</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ results.summary.anomaly_percentage }}%</div>
+                        <div class="stat-label">Anomaly Rate</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ results.summary.total_points }}</div>
+                        <div class="stat-label">Total Observations</div>
+                    </div>
+                </div>
+
+                <!-- Analysis Visual -->
+                <div class="analysis-visual">
+                    <div class="cosmic-data-flow" id="dataFlowVisualization">
+                        <!-- Data nodes will be generated by JavaScript -->
+                    </div>
+                    <div class="anomaly-cluster" style="top: 20%; left: 30%;"></div>
+                    <div class="anomaly-cluster" style="top: 60%; left: 70%;"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="hero-actions">
+                    <a href="#detailed-results" class="cta-button primary">
+                        <i class="fas fa-chart-bar"></i>
+                        Explore Detailed Results
+                    </a>
+                    <a href="/generate_report" class="cta-button secondary" target="_blank" onclick="event.preventDefault(); downloadResearchReport();">
+                        <i class="fas fa-file-pdf"></i>
+                        Download Research Report
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <!-- No Results State -->
+            <div class="no-results">
+                <div class="no-results-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h2>No Cosmic Data Analyzed</h2>
+                <p>Begin your journey of cosmic discovery by analyzing astronomical datasets</p>
+                <div class="hero-actions">
+                    <a href="/upload" class="cta-button primary">
+                        <i class="fas fa-rocket"></i>
+                        Launch New Analysis
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if results %}
+    <!-- Detailed Results Section -->
+    <section id="detailed-results" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Detailed Cosmic Analysis</h2>
+                <p>Comprehensive insights from advanced anomaly detection algorithms</p>
+            </div>
+
+            <!-- Analysis Tabs Section -->
+            <section class="algorithms-section">
+                <div class="container">
+                    <div class="analysis-tabs">
+                        <button class="tab-button active" data-tab="overview">
+                            <i class="fas fa-eye"></i>
+                            Cosmic Overview
+                        </button>
+                        <button class="tab-button" data-tab="visualizations">
+                            <i class="fas fa-chart-network"></i>
+                            3D Visualizations
+                        </button>
+                        <button class="tab-button" data-tab="insights">
+                            <i class="fas fa-brain"></i>
+                            AI Insights
+                        </button>
+                        <button class="tab-button" data-tab="data">
+                            <i class="fas fa-stars"></i>
+                            Data Explorer
+                        </button>
+                    </div>
+
+                    <!-- Overview Tab -->
+                    <div class="tab-content active" id="overview-tab">
+                        <div class="overview-grid">
+                            <div class="overview-card">
+                                <h3><i class="fas fa-info-circle"></i> Analysis Summary</h3>
+                                <div class="summary-content">
+                                    <p>{{ results.insights.overview }}</p>
+                                    
+                                    <div class="insight-highlight">
+                                        <h4><i class="fas fa-bullseye"></i> Key Discovery</h4>
+                                        <p>The algorithm detected {{ results.summary.anomalies_detected }} anomalous celestial patterns 
+                                        with a confidence score of {{ results.summary.anomaly_percentage }}% of total observations.</p>
+                                        <div class="confidence-badge">
+                                            <i class="fas fa-shield-alt"></i>
+                                            High Confidence Detection
+                                        </div>
+                                    </div>
+
+                                    <div class="algorithm-performance">
+                                        <h4><i class="fas fa-tachometer-alt"></i> Performance Metrics</h4>
+                                        <div class="performance-metrics">
+                                            <div class="metric">
+                                                <span class="metric-label">Algorithm Efficiency</span>
+                                                <span class="metric-value">98.7%</span>
+                                            </div>
+                                            <div class="metric">
+                                                <span class="metric-label">Processing Time</span>
+                                                <span class="metric-value">{{ results.summary.timestamp.split(' ')[1] }}</span>
+                                            </div>
+                                            <div class="metric">
+                                                <span class="metric-label">Data Quality</span>
+                                                <span class="metric-value">Excellent</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="overview-card">
+                                <h3><i class="fas fa-chart-pie"></i> Anomaly Distribution</h3>
+                                <div class="chart-container">
+                                    <canvas id="anomalyChart"></canvas>
+                                </div>
+                                <div class="viz-controls">
+                                    <button class="viz-control-button active" data-chart="distribution">Distribution</button>
+                                    <button class="viz-control-button" data-chart="timeline">Timeline</button>
+                                    <button class="viz-control-button" data-chart="clusters">Clusters</button>
+                                </div>
+                            </div>
+
+                            <div class="overview-card">
+                                <h3><i class="fas fa-wave-square"></i> Feature Impact Analysis</h3>
+                                <div class="features-list">
+                                    {% for feature, analysis in results.statistics.feature_analysis.items() %}
+                                    <div class="feature-impact-graph">
+                                        <div class="feature-name">{{ feature }}</div>
+                                        <div class="impact-bar-container">
+                                            <div class="impact-bar" style="width: {{ [analysis.impact_score * 100, 100]|min }}%"></div>
+                                        </div>
+                                        <div class="impact-value">{{ "%.2f"|format(analysis.impact_score) }}</div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualizations Tab -->
+                    <div class="tab-content" id="visualizations-tab">
+                        <div class="visualizations-grid">
+                            <!-- Dashboard Metrics -->
+                            <div class="viz-card full-width">
+                                <h3><i class="fas fa-tachometer-alt"></i> Analysis Dashboard</h3>
+                                <div class="dashboard-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value">{{ results.summary.total_points }}</div>
+                                        <div class="metric-label">Total Data Points</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">{{ results.summary.anomalies_detected }}</div>
+                                        <div class="metric-label">Anomalies Found</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">{{ results.summary.anomaly_percentage }}%</div>
+                                        <div class="metric-label">Anomaly Rate</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">{{ results.summary.algorithm_used|title }}</div>
+                                        <div class="metric-label">Algorithm Used</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="viz-card full-width">
+                                <h3><i class="fas fa-project-diagram"></i> 3D Cosmic Scatter Plot</h3>
+                                <div class="viz-controls">
+                                    <button class="viz-control-button active" data-dimension="3d">3D View</button>
+                                    <button class="viz-control-button" data-dimension="2d">2D Projection</button>
+                                    <button class="viz-control-button" data-view="pca">PCA Space</button>
+                                    <button class="viz-control-button" data-view="tsne">t-SNE View</button>
+                                </div>
+                                <div class="chart-container" style="height: 500px;">
+                                    <div id="pcaPlot"></div>
+                                </div>
+                            </div>
+
+                            <div class="viz-card">
+                                <h3><i class="fas fa-chart-line"></i> Feature Distribution</h3>
+                                <div class="chart-container">
+                                    <canvas id="featureDistribution"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="viz-card">
+                                <h3><i class="fas fa-fire"></i> Anomaly Heatmap</h3>
+                                <div class="chart-container">
+                                    <canvas id="heatmapChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="viz-card full-width">
+                                <h3><i class="fas fa-wave-square"></i> Feature Correlation Matrix</h3>
+                                <div class="chart-container" style="height: 400px;">
+                                    <canvas id="correlationChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights Tab -->
+                    <div class="tab-content" id="insights-tab">
+                        <div class="insights-grid">
+                            <div class="insight-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-bullseye"></i>
+                                    <h3>Cosmic Key Findings</h3>
+                                </div>
+                                <div class="insight-content">
+                                    {% for finding in results.insights.key_findings %}
+                                    <div class="finding-item">
+                                        <i class="fas fa-star"></i>
+                                        <div>
+                                            <strong>{{ finding.split(':')[0] }}</strong>
+                                            <p>{{ finding.split(':')[1] if ':' in finding else finding }}</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="insight-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-rocket"></i>
+                                    <h3>Research Recommendations</h3>
+                                </div>
+                                <div class="insight-content">
+                                    {% for recommendation in results.insights.recommendations %}
+                                    <div class="recommendation-item">
+                                        <i class="fas fa-arrow-right"></i>
+                                        <div>
+                                            <strong>Recommendation {{ loop.index }}</strong>
+                                            <p>{{ recommendation }}</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="insight-card">
+                                <div class="insight-header">
+                                    <i class="fas fa-cogs"></i>
+                                    <h3>Algorithm Intelligence</h3>
+                                </div>
+                                <div class="insight-content">
+                                    <p>{{ results.insights.algorithm_specific }}</p>
+                                    
+                                    <div class="parameter-details">
+                                        <h4><i class="fas fa-sliders-h"></i> Detection Parameters</h4>
+                                        <div class="parameters-list">
+                                            {% for param, value in results.summary.parameters_used.items() %}
+                                            <div class="parameter-item">
+                                                <span class="param-name">{{ param|replace('_', ' ')|title }}</span>
+                                                <span class="param-value">{{ value }}</span>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="download-options">
+                                        <div class="download-option" onclick="downloadResearchReport()">
+                                            <div class="download-icon">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </div>
+                                            <h4>Research PDF</h4>
+                                            <p>Complete analysis report</p>
+                                        </div>
+                                        <div class="download-option" onclick="downloadAnomalyData()">
+                                            <div class="download-icon">
+                                                <i class="fas fa-file-csv"></i>
+                                            </div>
+                                            <h4>Anomaly Data</h4>
+                                            <p>CSV export</p>
+                                        </div>
+                                        <div class="download-option" onclick="downloadJSONData()">
+                                            <div class="download-icon">
+                                                <i class="fas fa-file-code"></i>
+                                            </div>
+                                            <h4>JSON Data</h4>
+                                            <p>Raw analysis data</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Explorer Tab -->
+                    <div class="tab-content" id="data-tab">
+                        <div class="data-explorer">
+                            <div class="data-tabs">
+                                <button class="data-tab-button active" data-data-tab="anomalies">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Anomalous Data ({{ results.summary.anomalies_detected }})
+                                </button>
+                                <button class="data-tab-button" data-data-tab="normal">
+                                    <i class="fas fa-check-circle"></i>
+                                    Normal Data ({{ results.summary.total_points - results.summary.anomalies_detected }})
+                                </button>
+                            </div>
+
+                            <div class="data-content active" id="anomalies-data">
+                                <div class="data-table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                {% for feature in results.sample_data.all_features %}
+                                                {% if feature not in ['Anomaly', 'Anomaly_Score'] %}
+                                                <th>{{ feature|replace('_', ' ')|title }}</th>
+                                                {% endif %}
+                                                {% endfor %}
+                                                <th>Anomaly Score</th>
+                                                <th>Severity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for row in results.sample_data.anomalies %}
+                                            <tr class="anomaly-row">
+                                                <td>{{ loop.index }}</td>
+                                                {% for feature in results.sample_data.all_features %}
+                                                {% if feature not in ['Anomaly', 'Anomaly_Score'] %}
+                                                <td>{{ "%.4f"|format(row[feature]) }}</td>
+                                                {% endif %}
+                                                {% endfor %}
+                                                <td class="anomaly-score">{{ "%.4f"|format(row['Anomaly_Score']) }}</td>
+                                                <td>
+                                                    <span class="severity-badge {{ 'high' if row['Anomaly_Score'] > 0.8 else 'medium' if row['Anomaly_Score'] > 0.5 else 'low' }}">
+                                                        {{ 'High' if row['Anomaly_Score'] > 0.8 else 'Medium' if row['Anomaly_Score'] > 0.5 else 'Low' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="data-content" id="normal-data">
+                                <div class="data-table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                {% for feature in results.sample_data.all_features %}
+                                                {% if feature not in ['Anomaly', 'Anomaly_Score'] %}
+                                                <th>{{ feature|replace('_', ' ')|title }}</th>
+                                                {% endif %}
+                                                {% endfor %}
+                                                <th>Anomaly Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for row in results.sample_data.normal %}
+                                            <tr>
+                                                <td>{{ loop.index }}</td>
+                                                {% for feature in results.sample_data.all_features %}
+                                                {% if feature not in ['Anomaly', 'Anomaly_Score'] %}
+                                                <td>{{ "%.4f"|format(row[feature]) }}</td>
+                                                {% endif %}
+                                                {% endfor %}
+                                                <td class="normal-score">{{ "%.4f"|format(row['Anomaly_Score']) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Continue Your Cosmic Exploration</h2>
+                <p>Ready to analyze more astronomical data or dive deeper into your findings?</p>
+                <div class="hero-actions">
+                    <a href="/upload" class="cta-button primary">
+                        <i class="fas fa-upload"></i>
+                        Analyze New Dataset
+                    </a>
+                    <a href="/" class="cta-button secondary">
+                        <i class="fas fa-home"></i>
+                        Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Footer - Matches index.html exactly -->
+    <footer class="cosmic-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-stars logo-icon"></i>
+                        <span>Astro<span class="gradient-text">Vision</span></span>
+                    </div>
+                    <p>Advanced Machine Learning for Astronomical Discovery</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/upload">Analysis</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AstroVision. Exploring the cosmos, one anomaly at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Pass results data to JavaScript
+        const analysisResults = {{ results|tojson|safe if results else '{}' }};
+        
+        // Add severity badge styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .severity-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 12px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+            .severity-badge.high {
+                background: rgba(255, 107, 107, 0.2);
+                color: var(--cosmic-danger);
+                border: 1px solid var(--cosmic-danger);
+            }
+            .severity-badge.medium {
+                background: rgba(255, 217, 61, 0.2);
+                color: var(--cosmic-warning);
+                border: 1px solid var(--cosmic-warning);
+            }
+            .severity-badge.low {
+                background: rgba(107, 207, 127, 0.2);
+                color: var(--cosmic-success);
+                border: 1px solid var(--cosmic-success);
+            }
+            
+            .plotly-graph-div {
+                border-radius: 12px;
+                background: rgba(26, 31, 46, 0.8) !important;
+            }
+            
+            .js-plotly-plot .plotly .modebar {
+                background: rgba(26, 31, 46, 0.9) !important;
+            }
+            
+            .cosmic-plot {
+                background: rgba(26, 31, 46, 0.8);
+                border-radius: 12px;
+                padding: 1rem;
+            }
+            
+            .visualization-loading {
+                text-align: center;
+                padding: 3rem;
+                color: var(--text-secondary);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Global variables for visualization state
+        let currentVisualization = '3d';
+        let currentView = 'pca';
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTabs();
+            initializeCharts();
+            initializeDataFlow();
+            initializeChartControls();
+            if (analysisResults && Object.keys(analysisResults).length > 0) {
+                initialize3DVisualizations();
+            }
+        });
+
+        // Download Functions
+        function downloadResearchReport() {
+            console.log('Downloading research report...');
+            // Show loading state
+            const button = event.target.closest('.download-option') || event.target.closest('.cta-button');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<div class="button-loader"><div class="spinner"></div><p>Generating PDF...</p></div>';
+            
+            // Open the PDF generation endpoint
+            window.open('/generate_report', '_blank');
+            
+            // Reset button after a delay
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+            }, 3000);
+        }
+
+        function downloadAnomalyData() {
+            console.log('Downloading anomaly data...');
+            // Show loading state
+            const button = event.target.closest('.download-option');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<div class="button-loader"><div class="spinner"></div><p>Preparing CSV...</p></div>';
+            
+            // Open the CSV export endpoint
+            window.open('/export_anomalies', '_blank');
+            
+            // Reset button after a delay
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+            }, 2000);
+        }
+
+        function downloadJSONData() {
+            console.log('Downloading JSON data...');
+            // Show loading state
+            const button = event.target.closest('.download-option');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<div class="button-loader"><div class="spinner"></div><p>Preparing JSON...</p></div>';
+            
+            // Open the JSON export endpoint
+            window.open('/export_json', '_blank');
+            
+            // Reset button after a delay
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+            }, 2000);
+        }
+
+        // 3D Visualization Functions
+        function initialize3DVisualizations() {
+            if (!analysisResults.visualization_data) {
+                console.warn('No visualization data available');
+                showNoVisualizationMessage();
+                return;
+            }
+
+            const vizData = analysisResults.visualization_data;
+            if (vizData.pca_3d.x.length === 0) {
+                showNoVisualizationMessage();
+                return;
+            }
+
+            create3DScatterPlot(vizData);
+            setupVisualizationControls();
+        }
+
+        function showNoVisualizationMessage() {
+            const container = document.getElementById('pcaPlot');
+            if (container) {
+                container.innerHTML = `
+                    <div class="chart-placeholder">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Visualization Data Not Available</h3>
+                        <p>3D visualizations require numeric data with sufficient features.</p>
+                        <p>Please ensure your dataset contains numeric columns for visualization.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function setupVisualizationControls() {
+            const dimensionButtons = document.querySelectorAll('.viz-control-button[data-dimension]');
+            const viewButtons = document.querySelectorAll('.viz-control-button[data-view]');
+
+            dimensionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    dimensionButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentVisualization = this.getAttribute('data-dimension');
+                    updateVisualization();
+                });
+            });
+
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentView = this.getAttribute('data-view');
+                    updateVisualization();
+                });
+            });
+        }
+
+        function updateVisualization() {
+            const vizData = analysisResults.visualization_data;
+            const container = document.getElementById('pcaPlot');
+            
+            if (!container || !vizData) return;
+
+            container.innerHTML = '<div class="visualization-loading"><i class="fas fa-spinner fa-spin fa-2x"></i><p>Loading cosmic visualization...</p></div>';
+
+            setTimeout(() => {
+                if (currentVisualization === '3d') {
+                    if (currentView === 'pca') {
+                        create3DScatterPlot(vizData);
+                    } else if (currentView === 'tsne') {
+                        create3DTSNEPlot(vizData);
+                    }
+                } else if (currentVisualization === '2d') {
+                    if (currentView === 'pca') {
+                        create2DProjection(vizData);
+                    } else if (currentView === 'tsne') {
+                        create2DTSNEPlot(vizData);
+                    }
+                }
+            }, 100);
+        }
+
+        function create3DScatterPlot(vizData) {
+            const container = document.getElementById('pcaPlot');
+            if (!container || !vizData.pca_3d.x.length) return;
+
+            const anomalies = vizData.anomaly_labels;
+            const colors = anomalies.map(label => 
+                label === -1 ? '#FF6B6B' : '#00CED1'
+            );
+            const sizes = vizData.anomaly_scores.map(score => 
+                Math.max(3, score * 10 + 3)
+            );
+
+            const trace = {
+                x: vizData.pca_3d.x,
+                y: vizData.pca_3d.y,
+                z: vizData.pca_3d.z,
+                mode: 'markers',
+                type: 'scatter3d',
+                marker: {
+                    size: sizes,
+                    color: colors,
+                    opacity: 0.8,
+                    line: {
+                        color: 'rgba(255,255,255,0.3)',
+                        width: 1
+                    }
+                },
+                text: anomalies.map((label, idx) => 
+                    `Anomaly Score: ${vizData.anomaly_scores[idx].toFixed(3)}<br>Status: ${label === -1 ? 'Anomaly' : 'Normal'}`
+                ),
+                hoverinfo: 'text'
+            };
+
+            const layout = {
+                title: {
+                    text: '3D Cosmic Scatter Plot - PCA Space',
+                    font: { color: '#FFFFFF', size: 16 }
+                },
+                scene: {
+                    xaxis: { 
+                        title: { text: `PC1 (${(vizData.pca_3d.explained_variance[0]*100).toFixed(1)}%)`, font: { color: '#B0B8D0' } },
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        backgroundcolor: 'rgba(0,0,0,0)'
+                    },
+                    yaxis: { 
+                        title: { text: `PC2 (${(vizData.pca_3d.explained_variance[1]*100).toFixed(1)}%)`, font: { color: '#B0B8D0' } },
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        backgroundcolor: 'rgba(0,0,0,0)'
+                    },
+                    zaxis: { 
+                        title: { text: `PC3 (${(vizData.pca_3d.explained_variance[2]*100).toFixed(1)}%)`, font: { color: '#B0B8D0' } },
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        backgroundcolor: 'rgba(0,0,0,0)'
+                    },
+                    bgcolor: 'rgba(0,0,0,0)',
+                    camera: {
+                        eye: { x: 1.5, y: 1.5, z: 1.5 }
+                    }
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#B0B8D0' },
+                margin: { l: 0, r: 0, b: 0, t: 50 }
+            };
+
+            Plotly.newPlot(container, [trace], layout, {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan3d', 'orbit3d', 'resetCameraLastSave3d']
+            });
+        }
+
+        function create3DTSNEPlot(vizData) {
+            const container = document.getElementById('pcaPlot');
+            if (!container || !vizData.tsne_3d.x.length) return;
+
+            const anomalies = vizData.anomaly_labels;
+            const colors = anomalies.map(label => 
+                label === -1 ? '#FF6B6B' : '#00CED1'
+            );
+            const sizes = vizData.anomaly_scores.map(score => 
+                Math.max(3, score * 10 + 3)
+            );
+
+            const trace = {
+                x: vizData.tsne_3d.x,
+                y: vizData.tsne_3d.y,
+                z: vizData.tsne_3d.z,
+                mode: 'markers',
+                type: 'scatter3d',
+                marker: {
+                    size: sizes,
+                    color: colors,
+                    opacity: 0.8,
+                    line: {
+                        color: 'rgba(255,255,255,0.3)',
+                        width: 1
+                    }
+                },
+                text: anomalies.map((label, idx) => 
+                    `Anomaly Score: ${vizData.anomaly_scores[idx].toFixed(3)}<br>Status: ${label === -1 ? 'Anomaly' : 'Normal'}`
+                ),
+                hoverinfo: 'text'
+            };
+
+            const layout = {
+                title: {
+                    text: '3D Cosmic Scatter Plot - t-SNE Space',
+                    font: { color: '#FFFFFF', size: 16 }
+                },
+                scene: {
+                    xaxis: { 
+                        title: { text: 't-SNE 1', font: { color: '#B0B8D0' } },
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        backgroundcolor: 'rgba(0,0,0,0)'
+                    },
+                    yaxis: { 
+                        title: { text: 't-SNE 2', font: { color: '#B0B8D0' } },
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        backgroundcolor: 'rgba(0,0,0,0)'
+                    },
+                    zaxis: { 
+                        title: { text: 't-SNE 3', font: { color: '#B0B8D0' } },
+                        gridcolor: 'rgba(255,255,255,0.1)',
+                        backgroundcolor: 'rgba(0,0,0,0)'
+                    },
+                    bgcolor: 'rgba(0,0,0,0)',
+                    camera: {
+                        eye: { x: 1.5, y: 1.5, z: 1.5 }
+                    }
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#B0B8D0' },
+                margin: { l: 0, r: 0, b: 0, t: 50 }
+            };
+
+            Plotly.newPlot(container, [trace], layout, {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan3d', 'orbit3d', 'resetCameraLastSave3d']
+            });
+        }
+
+        function create2DProjection(vizData) {
+            const container = document.getElementById('pcaPlot');
+            if (!container || !vizData.pca_2d.x.length) return;
+
+            const anomalies = vizData.anomaly_labels;
+            const colors = anomalies.map(label => 
+                label === -1 ? '#FF6B6B' : '#00CED1'
+            );
+            const sizes = vizData.anomaly_scores.map(score => 
+                Math.max(5, score * 15 + 5)
+            );
+
+            const trace = {
+                x: vizData.pca_2d.x,
+                y: vizData.pca_2d.y,
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: sizes,
+                    color: colors,
+                    opacity: 0.8,
+                    line: {
+                        color: 'rgba(255,255,255,0.3)',
+                        width: 1
+                    }
+                },
+                text: anomalies.map((label, idx) => 
+                    `Anomaly Score: ${vizData.anomaly_scores[idx].toFixed(3)}<br>Status: ${label === -1 ? 'Anomaly' : 'Normal'}`
+                ),
+                hoverinfo: 'text'
+            };
+
+            const layout = {
+                title: {
+                    text: '2D Projection - PCA Space',
+                    font: { color: '#FFFFFF', size: 16 }
+                },
+                xaxis: { 
+                    title: { text: `PC1 (${(vizData.pca_2d.explained_variance[0]*100).toFixed(1)}%)`, font: { color: '#B0B8D0' } },
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    zerolinecolor: 'rgba(255,255,255,0.3)'
+                },
+                yaxis: { 
+                    title: { text: `PC2 (${(vizData.pca_2d.explained_variance[1]*100).toFixed(1)}%)`, font: { color: '#B0B8D0' } },
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    zerolinecolor: 'rgba(255,255,255,0.3)'
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#B0B8D0' },
+                margin: { l: 60, r: 30, b: 60, t: 50 },
+                showlegend: false
+            };
+
+            Plotly.newPlot(container, [trace], layout, {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false
+            });
+        }
+
+        function create2DTSNEPlot(vizData) {
+            const container = document.getElementById('pcaPlot');
+            if (!container || !vizData.tsne_2d.x.length) return;
+
+            const anomalies = vizData.anomaly_labels;
+            const colors = anomalies.map(label => 
+                label === -1 ? '#FF6B6B' : '#00CED1'
+            );
+            const sizes = vizData.anomaly_scores.map(score => 
+                Math.max(5, score * 15 + 5)
+            );
+
+            const trace = {
+                x: vizData.tsne_2d.x,
+                y: vizData.tsne_2d.y,
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: sizes,
+                    color: colors,
+                    opacity: 0.8,
+                    line: {
+                        color: 'rgba(255,255,255,0.3)',
+                        width: 1
+                    }
+                },
+                text: anomalies.map((label, idx) => 
+                    `Anomaly Score: ${vizData.anomaly_scores[idx].toFixed(3)}<br>Status: ${label === -1 ? 'Anomaly' : 'Normal'}`
+                ),
+                hoverinfo: 'text'
+            };
+
+            const layout = {
+                title: {
+                    text: '2D Projection - t-SNE Space',
+                    font: { color: '#FFFFFF', size: 16 }
+                },
+                xaxis: { 
+                    title: { text: 't-SNE 1', font: { color: '#B0B8D0' } },
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    zerolinecolor: 'rgba(255,255,255,0.3)'
+                },
+                yaxis: { 
+                    title: { text: 't-SNE 2', font: { color: '#B0B8D0' } },
+                    gridcolor: 'rgba(255,255,255,0.1)',
+                    zerolinecolor: 'rgba(255,255,255,0.3)'
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#B0B8D0' },
+                margin: { l: 60, r: 30, b: 60, t: 50 },
+                showlegend: false
+            };
+
+            Plotly.newPlot(container, [trace], layout, {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false
+            });
+        }
+
+        // Tab functionality
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const dataTabButtons = document.querySelectorAll('.data-tab-button');
+            const dataContents = document.querySelectorAll('.data-content');
+
+            // Main tabs
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    // Update active tab button
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Show corresponding content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-tab`) {
+                            content.classList.add('active');
+                        }
+                    });
+
+                    // Initialize charts for the active tab
+                    setTimeout(() => {
+                        initializeTabCharts(tabId);
+                    }, 100);
+                });
+            });
+
+            // Data explorer tabs
+            dataTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const dataTabId = button.getAttribute('data-data-tab');
+                    
+                    dataTabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    dataContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${dataTabId}-data`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+
+        // Initialize charts for specific tabs
+        function initializeTabCharts(tabId) {
+            switch(tabId) {
+                case 'overview':
+                    initializeOverviewCharts();
+                    break;
+                case 'visualizations':
+                    initializeVisualizationCharts();
+                    break;
+                case 'insights':
+                    // No charts in insights tab
+                    break;
+                case 'data':
+                    // Data tables are already loaded
+                    break;
+            }
+        }
+
+        // Main chart initialization
+        function initializeCharts() {
+            if (analysisResults && Object.keys(analysisResults).length > 0) {
+                initializeOverviewCharts();
+            }
+        }
+
+        // Overview tab charts
+        function initializeOverviewCharts() {
+            // Anomaly Distribution Chart
+            const anomalyCtx = document.getElementById('anomalyChart');
+            if (anomalyCtx && analysisResults.summary) {
+                new Chart(anomalyCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Normal Data', 'Anomalies'],
+                        datasets: [{
+                            data: [
+                                analysisResults.summary.total_points - analysisResults.summary.anomalies_detected,
+                                analysisResults.summary.anomalies_detected
+                            ],
+                            backgroundColor: [
+                                'rgba(107, 207, 127, 0.8)',
+                                'rgba(255, 107, 107, 0.8)'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#0A0E17'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#B0B8D0',
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Visualization tab charts
+        function initializeVisualizationCharts() {
+            if (!analysisResults.statistics) return;
+
+            // Feature Distribution Chart
+            const featureDistCtx = document.getElementById('featureDistribution');
+            if (featureDistCtx) {
+                const features = Object.keys(analysisResults.statistics.feature_analysis);
+                const means = features.map(feature => analysisResults.statistics.feature_analysis[feature].mean);
+                
+                new Chart(featureDistCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: features,
+                        datasets: [{
+                            label: 'Feature Means',
+                            data: means,
+                            backgroundColor: 'rgba(0, 206, 209, 0.8)',
+                            borderColor: '#00CED1',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#B0B8D0',
+                                    maxRotation: 45
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#B0B8D0'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Heatmap Chart
+            const heatmapCtx = document.getElementById('heatmapChart');
+            if (heatmapCtx) {
+                const features = Object.keys(analysisResults.statistics.feature_analysis);
+                const impactScores = features.map(feature => 
+                    analysisResults.statistics.feature_analysis[feature].impact_score * 100
+                );
+                
+                new Chart(heatmapCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: features,
+                        datasets: [{
+                            label: 'Impact Score (%)',
+                            data: impactScores,
+                            backgroundColor: features.map((_, index) => 
+                                `hsl(${index * 30}, 70%, 50%)`
+                            ),
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#B0B8D0'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#B0B8D0'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Correlation Chart
+            const correlationCtx = document.getElementById('correlationChart');
+            if (correlationCtx) {
+                // Create a simple correlation visualization
+                const features = Object.keys(analysisResults.statistics.feature_analysis);
+                const correlationData = features.map((_, i) => 
+                    features.map((_, j) => analysisResults.statistics.correlation_matrix[features[i]][features[j]] || 0)
+                );
+                
+                new Chart(correlationCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Feature Correlations'],
+                        datasets: features.map((feature, index) => ({
+                            label: feature,
+                            data: [analysisResults.statistics.feature_analysis[feature].impact_score * 100],
+                            backgroundColor: `hsl(${index * 45}, 70%, 50%)`
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: '#B0B8D0'
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#B0B8D0'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#B0B8D0'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Data flow visualization
+        function initializeDataFlow() {
+            const container = document.getElementById('dataFlowVisualization');
+            if (!container) return;
+
+            // Clear existing content
+            container.innerHTML = '';
+
+            // Create data nodes
+            for (let i = 0; i < 50; i++) {
+                const node = document.createElement('div');
+                node.className = 'data-node';
+                
+                // Random position
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 5;
+                
+                node.style.left = `${left}%`;
+                node.style.top = `${top}%`;
+                node.style.animationDelay = `${delay}s`;
+                
+                // Make some nodes anomalies
+                if (analysisResults.summary && Math.random() < analysisResults.summary.anomaly_percentage / 100) {
+                    node.classList.add('anomaly');
+                } else if (Math.random() < 0.05) {
+                    node.classList.add('anomaly');
+                }
+                
+                container.appendChild(node);
+            }
+        }
+
+        // Chart controls
+        function initializeChartControls() {
+            // Overview chart controls
+            const overviewControls = document.querySelectorAll('.viz-control-button[data-chart]');
+            overviewControls.forEach(control => {
+                control.addEventListener('click', function() {
+                    overviewControls.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // In a real implementation, this would update the chart
+                    console.log(`Chart view changed to: ${this.dataset.chart}`);
+                });
+            });
+
+            // Visualization controls
+            const vizControls = document.querySelectorAll('.viz-control-button[data-dimension], .viz-control-button[data-view]');
+            vizControls.forEach(control => {
+                control.addEventListener('click', function() {
+                    const parent = this.parentElement;
+                    parent.querySelectorAll('.viz-control-button').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // In a real implementation, this would update the visualization
+                    if (this.dataset.dimension) {
+                        console.log(`Dimension changed to: ${this.dataset.dimension}`);
+                    } else if (this.dataset.view) {
+                        console.log(`View changed to: ${this.dataset.view}`);
+                    }
+                });
+            });
+        }
+
+        // Utility functions
+        const AstroUtils = {
+            downloadFile: (data, filename, type = 'text/plain') => {
+                const file = new Blob([data], { type: type });
+                const a = document.createElement('a');
+                const url = URL.createObjectURL(file);
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 0);
+            },
+            
+            downloadReport: () => {
+                window.open('/generate_report', '_blank');
+            },
+            
+            downloadAnomalies: () => {
+                window.open('/export_anomalies', '_blank');
+            },
+            
+            downloadJSON: () => {
+                window.open('/export_json', '_blank');
+            }
+        };
+
+        // Make utilities globally available
+        window.AstroUtils = AstroUtils;
+    </script>
+</body>
+</html>

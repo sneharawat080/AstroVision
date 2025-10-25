@@ -1,0 +1,36 @@
+{
+  "analysis_id": "326d80e3-1155-4ae7-85a0-2a962d858536",
+  "summary": {
+    "total_points": 10,
+    "anomalies_detected": 2,
+    "anomaly_percentage": 20.0,
+    "algorithm_used": "oneclasssvm",
+    "parameters_used": {
+      "contamination": 0.05,
+      "n_neighbors": 20,
+      "n_estimators": 10,
+      "kernel": "poly",
+      "gamma": "auto",
+      "nu": 0.05,
+      "eps": 0.5,
+      "min_samples": 5
+    },
+    "timestamp": "2025-10-21 12:51:46",
+    "dataset_info": {
+      "original_columns": [
+        "time",
+        "amplitude"
+      ],
+      "numeric_columns": [
+        "time",
+        "amplitude"
+      ],
+      "original_shape": [
+        10,
+        2
+      ],
+      "processed_shape": [
+        10,
+        2
+      ],
+      "missing_values": 

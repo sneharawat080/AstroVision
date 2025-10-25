@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstroVision - Cosmic Anomaly Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional spacing styles */
+        .hero-content {
+            padding: 2rem 0;
+        }
+        
+        .cosmic-badge {
+            margin-bottom: 2rem;
+        }
+        
+        .hero-title {
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero-description {
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .hero-stats {
+            margin-bottom: 2.5rem;
+            gap: 2rem;
+        }
+        
+        .stat {
+            padding: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .hero-actions {
+            gap: 1.5rem;
+        }
+        
+        .cta-button {
+            padding: 1rem 2rem;
+            margin: 0.5rem 0;
+        }
+        
+        /* Responsive spacing */
+        @media (max-width: 768px) {
+            .hero-content {
+                padding: 1rem 0;
+            }
+            
+            .cosmic-badge {
+                margin-bottom: 1.5rem;
+            }
+            
+            .hero-title {
+                margin-bottom: 1rem;
+            }
+            
+            .hero-description {
+                margin-bottom: 2rem;
+            }
+            
+            .hero-stats {
+                margin-bottom: 2rem;
+                gap: 1rem;
+            }
+            
+            .hero-actions {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Space Background -->
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="cosmic-dust"></div>
+        <div class="floating-asteroids">
+            <div class="asteroid"></div>
+            <div class="asteroid"></div>
+            <div class="asteroid"></div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="cosmic-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <i class="fas fa-stars logo-icon"></i>
+                    <span>Astro<span class="gradient-text">Vision</span></span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link active"><i class="fas fa-home"></i> Home</a>
+                <a href="/upload" class="nav-link"><i class="fas fa-upload"></i> Analyze</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-content">
+                <!-- AI-Powered Cosmic Discovery Badge -->
+                <div class="cosmic-badge">
+                    <i class="fas fa-rocket"></i>
+                    <span>AI-Powered Cosmic Discovery</span>
+                </div>
+                
+                <!-- Main Title -->
+                <h1 class="hero-title">
+                    Discover the <span class="gradient-text">Unknown</span> in the 
+                    <span class="cosmic-text">Cosmos</span>
+                </h1>
+                
+                <!-- Description -->
+                <p class="hero-description">
+                    AstroVision leverages advanced machine learning to uncover hidden patterns, 
+                    rare celestial events, and anomalous phenomena in astronomical data. 
+                    Transform your research with intelligent anomaly detection and comprehensive analysis.
+                </p>
+
+                <!-- Stats Section -->
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">99.8%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">6+</div>
+                        <div class="stat-label">ML Algorithms</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Possibilities</div>
+                    </div>
+                </div>
+
+                <!-- Call to Action Buttons -->
+                <div class="hero-actions">
+                    <a href="/upload" class="cta-button primary">
+                        <i class="fas fa-play"></i>
+                        Start Cosmic Analysis
+                    </a>
+                    <a href="#features" class="cta-button secondary">
+                        <i class="fas fa-chart-line"></i>
+                        Explore Features
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="cosmic-orbit-system">
+                    <div class="central-star"></div>
+                    <div class="orbit-ring ring-1">
+                        <div class="planet planet-1"></div>
+                    </div>
+                    <div class="orbit-ring ring-2">
+                        <div class="planet planet-2"></div>
+                    </div>
+                    <div class="orbit-ring ring-3">
+                        <div class="anomaly-pulse"></div>
+                    </div>
+                    <div class="data-points">
+                        <div class="data-point"></div>
+                        <div class="data-point"></div>
+                        <div class="data-point anomaly"></div>
+                        <div class="data-point"></div>
+                        <div class="data-point anomaly"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section - 6 Features -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Advanced Cosmic Analytics</h2>
+                <p>Comprehensive suite of tools for astronomical research and discovery</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Multi-Algorithm Detection</h3>
+                    <p>Six advanced ML algorithms including Ensemble Methods and Auto-Encoders for comprehensive analysis</p>
+                    <ul class="feature-list">
+                        <li>Isolation Forest</li>
+                        <li>One-Class SVM</li>
+                        <li>Local Outlier Factor</li>
+                        <li>DBSCAN Clustering</li>
+                        <li>Elliptic Envelope</li>
+                        <li>Random Forest</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3>Interactive 3D Visualizations</h3>
+                    <p>Advanced 3D scatter plots, heatmaps, and real-time data exploration with Plotly.js</p>
+                    <ul class="feature-list">
+                        <li>3D PCA Visualizations</li>
+                        <li>Interactive Heatmaps</li>
+                        <li>Real-time Data Streams</li>
+                        <li>Cluster Analysis</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Research-Grade Reports</h3>
+                    <p>Automated PDF reports with statistical analysis, publication-ready visuals and citations</p>
+                    <ul class="feature-list">
+                        <li>Academic Formatting</li>
+                        <li>Statistical Summaries</li>
+                        <li>Export Capabilities</li>
+                        <li>Citation Ready</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Real-time Analysis</h3>
+                    <p>Live data processing and streaming anomaly detection for telescope feeds and observatories</p>
+                    <ul class="feature-list">
+                        <li>WebSocket Support</li>
+                        <li>Live Data Streams</li>
+                        <li>Real-time Alerts</li>
+                        <li>API Integration</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Big Data Processing</h3>
+                    <p>Handle massive astronomical datasets with optimized algorithms and distributed computing</p>
+                    <ul class="feature-list">
+                        <li>Scalable Architecture</li>
+                        <li>Parallel Processing</li>
+                        <li>Memory Optimization</li>
+                        <li>Batch Processing</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-satellite"></i>
+                    </div>
+                    <h3>Telescope Integration</h3>
+                    <p>Direct integration with major telescope systems and astronomical data sources</p>
+                    <ul class="feature-list">
+                        <li>API Endpoints</li>
+                        <li>Data Pipeline</li>
+                        <li>Format Conversion</li>
+                        <li>Real-time Feeds</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Algorithm Showcase - 6 Algorithms -->
+    <section class="algorithms-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Advanced Detection Algorithms</h2>
+                <p>Choose from six state-of-the-art machine learning models</p>
+            </div>
+
+            <div class="algorithms-grid">
+                <div class="algorithm-card">
+                    <div class="algorithm-header">
+                        <i class="fas fa-tree"></i>
+                        <h3>Isolation Forest</h3>
+                    </div>
+                    <p>Efficient for high-dimensional datasets using random partitioning and isolation principles</p>
+                    <div class="algorithm-stats">
+                        <span class="stat-tag">High Performance</span>
+                        <span class="stat-tag">Scalable</span>
+                        <span class="stat-tag">Ensemble</span>
+                    </div>
+                </div>
+
+                <div class="algorithm-card">
+                    <div class="algorithm-header">
+                        <i class="fas fa-project-diagram"></i>
+                        <h3>One-Class SVM</h3>
+                    </div>
+                    <p>Ideal for novelty detection when training data contains only normal examples</p>
+                    <div class="algorithm-stats">
+                        <span class="stat-tag">Robust</span>
+                        <span class="stat-tag">Flexible</span>
+                        <span class="stat-tag">Kernel-Based</span>
+                    </div>
+                </div>
+
+                <div class="algorithm-card">
+                    <div class="algorithm-header">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>Local Outlier Factor</h3>
+                    </div>
+                    <p>Density-based detection comparing local density of points with their neighbors</p>
+                    <div class="algorithm-stats">
+                        <span class="stat-tag">Local Analysis</span>
+                        <span class="stat-tag">Accurate</span>
+                        <span class="stat-tag">Density-Based</span>
+                    </div>
+                </div>
+
+                <div class="algorithm-card">
+                    <div class="algorithm-header">
+                        <i class="fas fa-dot-circle"></i>
+                        <h3>DBSCAN</h3>
+                    </div>
+                    <p>Clustering-based approach identifying outliers as noise points in low-density regions</p>
+                    <div class="algorithm-stats">
+                        <span class="stat-tag">Cluster-Based</span>
+                        <span class="stat-tag">Versatile</span>
+                        <span class="stat-tag">Noise Robust</span>
+                    </div>
+                </div>
+
+                <div class="algorithm-card">
+                    <div class="algorithm-header">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Elliptic Envelope</h3>
+                    </div>
+                    <p>Assumes Gaussian distribution and fits an ellipse around the central data points</p>
+                    <div class="algorithm-stats">
+                        <span class="stat-tag">Parametric</span>
+                        <span class="stat-tag">Robust</span>
+                        <span class="stat-tag">Gaussian</span>
+                    </div>
+                </div>
+
+                <div class="algorithm-card">
+                    <div class="algorithm-header">
+                        <i class="fas fa-random"></i>
+                        <h3>Random Forest</h3>
+                    </div>
+                    <p>Ensemble method that uses multiple decision trees for robust anomaly detection</p>
+                    <div class="algorithm-stats">
+                        <span class="stat-tag">Ensemble</span>
+                        <span class="stat-tag">Feature Importance</span>
+                        <span class="stat-tag">Robust</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Discover Cosmic Anomalies?</h2>
+                <p>Upload your astronomical dataset and let AstroVision uncover hidden patterns and rare events</p>
+                <a href="/upload" class="cta-button large">
+                    <i class="fas fa-rocket"></i>
+                    Launch Analysis
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="cosmic-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-stars logo-icon"></i>
+                        <span>Astro<span class="gradient-text">Vision</span></span>
+                    </div>
+                    <p>Advanced Machine Learning for Astronomical Discovery</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/upload">Analysis</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AstroVision. Exploring the cosmos, one anomaly at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
