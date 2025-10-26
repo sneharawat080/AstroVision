@@ -1,5 +1,3 @@
-// Enhanced AstroVision JavaScript - Main Application Logic
-
 class CosmicUI {
     constructor() {
         this.currentStep = 1;
