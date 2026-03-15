@@ -1,4 +1,3 @@
-// Enhanced Dashboard Functionality
 class AdvancedDashboard {
     constructor() {
         this.results = window.analysisResults;
