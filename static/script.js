@@ -219,7 +219,14 @@ class CosmicUI {
                     body: formData
                 });
 
-                const result = await response.json();
+                let result;
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    result = await response.json();
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(response.status === 413 ? "File too large (Max 100MB)" : "Server error: " + response.status);
+                }
 
                 if (result.success) {
                     this.showNotification('Cosmic analysis initiated successfully! Processing your data...', 'success');
@@ -235,8 +242,8 @@ class CosmicUI {
                     this.updateWorkflowStep(2);
                 }
             } catch (error) {
-                this.showNotification('Network error. Please check your connection and try again.', 'error');
                 console.error('Analysis error:', error);
+                this.showNotification(`Error: ${error.message || 'Network error'}`, 'error');
                 this.updateWorkflowStep(2);
             } finally {
                 this.setLoadingState(false);
