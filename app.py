@@ -25,8 +25,12 @@ app.config['SECRET_KEY'] = 'astrovision-secret-key-2024'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 
-# Create uploads directory if it doesn't exist
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+# Create uploads directory if it doesn't exist (handled gracefully for read-only systems)
+try:
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+except Exception as e:
+    print(f"Warning: Could not create upload directory: {e}. Using memory-based processing.")
 
 ALLOWED_EXTENSIONS = {'csv'}
 
@@ -125,30 +129,42 @@ def generate_visualization_data(df, algorithm, parameters):
         # Handle NaN values
         X = np.nan_to_num(X)
         
+        # Sample data if it's too large for visualization (t-SNE and browser performance)
+        MAX_VIZ_POINTS = 5000
+        original_indices = np.arange(len(X))
+        
+        if len(X) > MAX_VIZ_POINTS:
+            print(f"Sampling {MAX_VIZ_POINTS} points from {len(X)} for visualization")
+            sample_indices = np.random.choice(len(X), MAX_VIZ_POINTS, replace=False)
+            X_viz = X[sample_indices]
+            anomaly_labels_viz = (df['Anomaly'].values[sample_indices]) if 'Anomaly' in df.columns else np.zeros(MAX_VIZ_POINTS)
+            anomaly_scores_viz = (df['Anomaly_Score'].values[sample_indices]) if 'Anomaly_Score' in df.columns else np.zeros(MAX_VIZ_POINTS)
+        else:
+            X_viz = X
+            anomaly_labels_viz = df['Anomaly'].values if 'Anomaly' in df.columns else np.zeros(len(df))
+            anomaly_scores_viz = df['Anomaly_Score'].values if 'Anomaly_Score' in df.columns else np.zeros(len(df))
+
         # Generate PCA components (3D and 2D)
         pca_3d = PCA(n_components=3, random_state=42)
         pca_2d = PCA(n_components=2, random_state=42)
         
-        X_pca_3d = pca_3d.fit_transform(X)
-        X_pca_2d = pca_2d.fit_transform(X)
+        X_pca_3d = pca_3d.fit_transform(X_viz)
+        X_pca_2d = pca_2d.fit_transform(X_viz)
         
         # Generate t-SNE components (2D and 3D)
-        tsne_2d = TSNE(n_components=2, random_state=42, perplexity=min(30, len(X)-1))
-        X_tsne_2d = tsne_2d.fit_transform(X)
+        # Use a subset for t-SNE if still too large, but 5000 is usually okay
+        tsne_2d = TSNE(n_components=2, random_state=42, perplexity=min(30, len(X_viz)-1))
+        X_tsne_2d = tsne_2d.fit_transform(X_viz)
         
         # For large datasets, use PCA first for t-SNE 3D
-        if len(X) > 1000:
-            pca_50 = PCA(n_components=50, random_state=42)
-            X_pca_for_tsne = pca_50.fit_transform(X)
+        if len(X_viz) > 1000:
+            pca_50 = PCA(n_components=min(50, X_viz.shape[1]), random_state=42)
+            X_pca_for_tsne = pca_50.fit_transform(X_viz)
             tsne_3d = TSNE(n_components=3, random_state=42, perplexity=30)
             X_tsne_3d = tsne_3d.fit_transform(X_pca_for_tsne)
         else:
             tsne_3d = TSNE(n_components=3, random_state=42, perplexity=30)
-            X_tsne_3d = tsne_3d.fit_transform(X)
-        
-        # Get anomaly labels and scores
-        anomaly_labels = df['Anomaly'].values if 'Anomaly' in df.columns else np.zeros(len(df))
-        anomaly_scores = df['Anomaly_Score'].values if 'Anomaly_Score' in df.columns else np.zeros(len(df))
+            X_tsne_3d = tsne_3d.fit_transform(X_viz)
         
         visualization_data = {
             'pca_3d': {
@@ -171,10 +187,10 @@ def generate_visualization_data(df, algorithm, parameters):
                 'y': X_tsne_3d[:, 1].tolist(),
                 'z': X_tsne_3d[:, 2].tolist()
             },
-            'anomaly_labels': anomaly_labels.tolist(),
-            'anomaly_scores': anomaly_scores.tolist(),
+            'anomaly_labels': anomaly_labels_viz.tolist(),
+            'anomaly_scores': anomaly_scores_viz.tolist(),
             'feature_names': numeric_columns,
-            'cluster_analysis': (anomaly_labels + 2).tolist()  # Convert to positive cluster labels
+            'cluster_analysis': (anomaly_labels_viz + 2).tolist()  # Convert to positive cluster labels
         }
         
         return visualization_data
@@ -328,11 +344,20 @@ def analyze():
             print(f"Processing file: {file.filename}")  # Debug print
             
             # Read the CSV file
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-            
-            df = pd.read_csv(filepath)
+            # Fixed: Read directly from the file stream to avoid "Read-only file system" errors
+            # and handle large datasets by processing in memory
+            try:
+                # Seek to start just in case
+                file.stream.seek(0)
+                df = pd.read_csv(file.stream)
+                print(f"DataFrame loaded from stream, shape: {df.shape}")
+            except Exception as read_error:
+                print(f"Error reading from stream: {read_error}. Attempting to save to local storage.")
+                # Fallback to saving if stream reading fails (some older Flask/Pandas versions)
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                df = pd.read_csv(filepath)
             print(f"DataFrame shape: {df.shape}")  # Debug print
             
             # Get algorithm and parameters from form
