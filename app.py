@@ -23,7 +23,7 @@ from reportlab.lib.units import inch
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'astrovision-secret-key-2024'
 app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # Increased to 500MB to handle massive datasets
 
 # Create uploads directory if it doesn't exist (handled gracefully for read-only systems)
 try:
