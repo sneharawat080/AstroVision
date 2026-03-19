@@ -13,12 +13,6 @@ import json
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
-import io
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
-from reportlab.lib.units import inch
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'astrovision-secret-key-2024'
@@ -622,6 +616,13 @@ def export_json():
 @app.route('/generate_sample')
 def generate_sample():
     """Generate and download sample astronomical dataset"""
+
+    from reportlab.lib.pagesizes import letter
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib import colors
+    from reportlab.lib.units import inch
+
     try:
         # Generate realistic sample astronomical data
         np.random.seed(42)
