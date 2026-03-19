@@ -12,12 +12,18 @@ from sklearn.manifold import TSNE
 import json
 from datetime import datetime
 import os
+import io
 from werkzeug.utils import secure_filename
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.units import inch
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'astrovision-secret-key-2024'
 app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 
 # Create uploads directory if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -616,13 +622,6 @@ def export_json():
 @app.route('/generate_sample')
 def generate_sample():
     """Generate and download sample astronomical dataset"""
-
-    from reportlab.lib.pagesizes import letter
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.lib import colors
-    from reportlab.lib.units import inch
-
     try:
         # Generate realistic sample astronomical data
         np.random.seed(42)
