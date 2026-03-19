@@ -246,14 +246,25 @@ body {
 .cosmic-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: rgba(0, 206, 209, 0.1);
-  border: 1px solid var(--cosmic-primary);
-  border-radius: 20px;
-  padding: 0.5rem 1rem;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
+  justify-content: center;
+  gap: 0.6rem;
+  background: rgba(0, 206, 209, 0.08);
+  border: 1px solid rgba(0, 206, 209, 0.4);
+  border-radius: 100px;
+  padding: 0.6rem 1.2rem;
+  margin-bottom: 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--cosmic-primary);
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 20px rgba(0, 206, 209, 0.1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.cosmic-badge i {
+  font-size: 1rem;
+  margin-top: -1px; /* Optical alignment for the rocket icon */
 }
 
 .hero-title {
